@@ -6,7 +6,7 @@ Este repositorio contiene datos extraídos de los reportes del [Observatorio Ciu
 
 Actualmente, los datos en este repositorio contienen información del 18 de marzo al 27 de mayo (último día disponible). Los casos presentados incluyen información proporcionada por el Ministerio de Salud de Nicaragua (MINSA). En caso de requerir información única sobre los casos del MINSA, sugiero utilizar la información de la [European Centre for Disease Prevention and Control](https://www.ecdc.europa.eu/). De igual forma pueden usar el paquete [covdata](https://kjhealy.github.io/covdata/) en R, el cual contiene información de número de casos y muertes oficiales.
 
-### Variables
+## Variables
 
 Las siguientes variables se encuentran en este base de datos: 
 
@@ -15,6 +15,10 @@ Las siguientes variables se encuentran en este base de datos:
 * `deaths`: Acumulado de muertes sospechosas COVID-19 reportados por el Observatorio Ciudadano.
 * `cases_minsa`: Acumulado de casos COVID-19 reportados por el MINSA.
 * `deaths_minsa`: Acumulado de muertes COVID-19 reportados por el MINSA.
+
+## Descargar los datos
+
+Los datos se encuentran en la carpeta `/data` en formato [CSV](https://raw.githubusercontent.com/RRMaximiliano/observatorio-covid-nicaragua/master/data/observatorio_cases.csv). Al acceder el link, deberán darle click derecho "guardar como / save as".
 
 ## Caveats
 
