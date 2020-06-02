@@ -1,0 +1,1 @@
+observatorio-covid-nicaragua
