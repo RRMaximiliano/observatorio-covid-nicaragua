@@ -22,9 +22,11 @@ Los datos se encuentran en la carpeta `/data` en formato [CSV](https://raw.githu
 
 ## Caveats
 
-Los datos presentados por el Observatorio Ciudadano no representan los datos oficiales de Nicaragua. Su función es informar con mayor rigurosidad la presencia de COVID-19 dada la limitaciones de los datos del MINSA. 
-
-> Notas: Trataré de actualizar los datos a medidas que salgan los reportes del Observatorio, y, de igual forma, incluir muertes sospechosas por COVID-19.
+* Los datos presentados por el Observatorio Ciudadano no representan los datos oficiales de Nicaragua. Su función es informar con mayor rigurosidad la presencia de COVID-19 dada la limitaciones de los datos del MINSA. 
+* En este repositorio podrán encontrar dos branches: (1) `master` y (2) `old-data`. El segundo branch tiene como objetivo servir como historial de las diferencias en los datos presentados por el Observatorio Ciudadano. A partir del 5 de mayo, los datos en el último informe y en la página web del Observatorio cambiaron retrospectivamente. Otras discrepancias son: 
+  * PDF: 4217; Página web: 4117 en el día 30 de Mayo.
+  * PDF: 3725; Página web: 3735 en el día 27 de Mayo. 
+  * PDF: 2676; Página web: 2702 en el día 23 de Mayo.  
 
 ## Comentarios y sugerencias
 
