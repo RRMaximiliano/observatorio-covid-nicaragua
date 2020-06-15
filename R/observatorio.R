@@ -90,6 +90,8 @@ full_cov_curve <- cov_curve %>%
     bind_rows(nic_cov_curve) %>% 
     arrange(date, countries)
 
+write_csv(full_cov_curve, path = file.path(data, "full_cov_curve.csv"))
+
 # Plot --------------------------------------------------------------------
 
 # Cases -------------------------------------------------------------------
