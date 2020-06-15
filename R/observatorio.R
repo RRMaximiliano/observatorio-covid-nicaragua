@@ -101,7 +101,7 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-03") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == ymd("2020-06-10") & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
     ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cu_cases, 
@@ -114,7 +114,7 @@ full_cov_curve %>%
                     segment.color = NA) + 
     guides(color = FALSE) + 
     scale_color_manual(values = prismatic::clr_darken(paletteer_d("ggsci::category20_d3"), 0.2)) +
-    scale_y_log10() + 
+    scale_y_log10(labels = scales::comma_format(accuracy = 1)) + 
     # scale_y_continuous(labels = scales::comma_format(accuracy = 1),
     #                    breaks = 2^seq(4, 12),
     #                    trans = "log2") +
@@ -130,11 +130,11 @@ full_cov_curve %>%
 # Save Plot
 ggsave(paste0(figures, "/cases-", date, ".pdf"), 
        device = cairo_pdf, scale = 0.8,
-       height = 6, width = 10)
+       height = 8, width = 10)
 
 ggsave(paste0(figures, "/cases-", date, ".png"), 
        dpi = 750, scale = 0.8,
-       height = 6, width = 10)
+       height = 8, width = 10)
 
 # Deaths ------------------------------------------------------------------
 full_cov_curve %>% 
@@ -145,7 +145,7 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-03") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == ymd("2020-06-10") & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
     ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cu_deaths, 
@@ -158,7 +158,7 @@ full_cov_curve %>%
                     segment.color = NA) + 
     guides(color = FALSE) + 
     scale_color_manual(values = prismatic::clr_darken(paletteer_d("ggsci::category20_d3"), 0.2)) +
-    scale_y_log10() + 
+    scale_y_log10(labels = scales::comma_format(accuracy = 1)) + 
     # scale_y_continuous(labels = scales::comma_format(accuracy = 1),
     #                    breaks = 2^seq(4, 12),
     #                    trans = "log2") +
@@ -174,8 +174,9 @@ full_cov_curve %>%
 # Save Plot
 ggsave(paste0(figures, "/deaths-", date, ".pdf"), 
        device = cairo_pdf, scale = 0.8,
-       height = 6, width = 10)
+       height = 8, width = 10)
 
 ggsave(paste0(figures, "/deaths-", date, ".png"), 
        dpi = 750, scale = 0.8,
-       height = 6, width = 10)
+       height = 8, width = 10)
+
