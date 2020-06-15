@@ -43,82 +43,9 @@ as”.
 
 ## Curva de contagio y muertes sospechosas por Covid 19
 
-``` r
-# Curva de contagios
-full_cov_curve %>% 
-    filter(cu_cases > 10) %>% 
-    mutate(
-        countries = case_when(countries == "El_Salvador" ~ "El Salvador",
-                              countries == "Costa_Rica" ~ "Costa Rica",
-                              TRUE ~ countries),
-        days_elapsed = date - min(date),
-        end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-10") & countries == "Nicaragua" ~ "Nicaragua",
-                              TRUE ~ end_label)
-    ) %>%
-    ggplot(mapping = aes(x = days_elapsed, y = cu_cases, 
-                         color = countries, label = end_label, 
-                         group = countries)) + 
-    geom_line(size = 0.8) + 
-    geom_text_repel(nudge_x = 1.1,
-                    nudge_y = 0.1, 
-                    family = "Roboto Condensed", 
-                    segment.color = NA) + 
-    guides(color = FALSE) + 
-    scale_color_manual(values = prismatic::clr_darken(paletteer_d("ggsci::category20_d3"), 0.2)) +
-    scale_y_log10(labels = scales::comma_format(accuracy = 1)) + 
-    labs(x = "Days since 10th reported confirmed case", 
-         y = "Cumulative number of cases (log scale)", 
-         title = "Cumulative Cases from COVID-19, Central America",
-         caption = "Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19.\nPlot: @rrmaximiliano") + 
-    theme_ipsum_rc() +
-    theme(
-        plot.caption = element_text(hjust = 0)
-    )
-#> Don't know how to automatically pick scale for object of type difftime. Defaulting to continuous.
-#> Warning: Removed 586 rows containing missing values (geom_text_repel).
-```
+![Cumulative Cases](figs/cases-2020-06-14.png)
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
-
-``` r
-
-# Curva de muertes
-full_cov_curve %>% 
-    filter(cu_deaths > 10) %>% 
-    mutate(
-        countries = case_when(countries == "El_Salvador" ~ "El Salvador",
-                              countries == "Costa_Rica" ~ "Costa Rica",
-                              TRUE ~ countries),
-        days_elapsed = date - min(date),
-        end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-10") & countries == "Nicaragua" ~ "Nicaragua",
-                              TRUE ~ end_label)
-    ) %>%
-    ggplot(mapping = aes(x = days_elapsed, y = cu_deaths, 
-                         color = countries, label = end_label, 
-                         group = countries)) + 
-    geom_line(size = 0.8) + 
-    geom_text_repel(nudge_x = 1.1,
-                    nudge_y = 0.1, 
-                    family = "Roboto Condensed", 
-                    segment.color = NA) + 
-    guides(color = FALSE) + 
-    scale_color_manual(values = prismatic::clr_darken(paletteer_d("ggsci::category20_d3"), 0.2)) +
-    scale_y_log10(labels = scales::comma_format(accuracy = 1)) + 
-    labs(x = "Days since 10th reported confirmed death", 
-         y = "Cumulative Number of Cases (log scale)", 
-         title = "Cumulative Deaths from COVID-19, Central America",
-         caption = "Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19.\nPlot: @rrmaximiliano") + 
-    theme_ipsum_rc() +
-    theme(
-        plot.caption = element_text(hjust = 0)
-    )
-#> Don't know how to automatically pick scale for object of type difftime. Defaulting to continuous.
-#> Warning: Removed 304 rows containing missing values (geom_text_repel).
-```
-
-<img src="man/figures/README-unnamed-chunk-3-2.png" width="100%" />
+![Cumulative Deaths](figs/deaths-2020-06-14.png)
 
 ## Caveats
 
