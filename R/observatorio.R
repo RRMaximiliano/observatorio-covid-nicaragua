@@ -103,7 +103,7 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-10") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == ymd("2020-06-17") & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
     ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cu_cases, 
@@ -123,6 +123,7 @@ full_cov_curve %>%
     labs(x = "Days since 10th reported confirmed case", 
          y = "Cumulative number of cases (log scale)", 
          title = "Cumulative Cases from COVID-19, Central America",
+         subtitle = "Data as of Sunday 21, 2020. Data for Nicaragua as of Wednesday, 17, 2020.",
          caption = "Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19.\nPlot: @rrmaximiliano") + 
     theme_ipsum_rc() +
     theme(
@@ -147,7 +148,7 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-10") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == ymd("2020-06-17") & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
     ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cu_deaths, 
@@ -167,6 +168,7 @@ full_cov_curve %>%
     labs(x = "Days since 10th reported confirmed death", 
          y = "Cumulative Number of Cases (log scale)", 
          title = "Cumulative Deaths from COVID-19, Central America",
+         subtitle = "Data as of Sunday 21, 2020. Data for Nicaragua as of Wednesday, 17, 2020.",
          caption = "Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19.\nPlot: @rrmaximiliano") + 
     theme_ipsum_rc() +
     theme(
