@@ -43,9 +43,9 @@ as”.
 
 ## Curva de contagio y muertes sospechosas por Covid 19
 
-![Cumulative Cases](figs/cases-2020-06-14.png)
+![Cumulative Cases](figs/cases-2020-06-21.png)
 
-![Cumulative Deaths](figs/deaths-2020-06-14.png)
+![Cumulative Deaths](figs/deaths-2020-06-21.png)
 
 ## Caveats
 
