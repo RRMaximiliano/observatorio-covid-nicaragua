@@ -43,9 +43,16 @@ as”.
 
 ## Curva de contagio y muertes sospechosas por Covid 19
 
+### Central America Region
+
 ![Cumulative Cases](figs/cases-2020-06-21.png)
 
 ![Cumulative Deaths](figs/deaths-2020-06-21.png)
+
+### Cases in Nicaragua
+
+![Cumulative Cases by
+Departments](figs/cases-departamentos2020-06-22.png)
 
 ## Caveats
 

@@ -184,3 +184,49 @@ ggsave(paste0(figures, "/deaths-", date, ".png"),
        dpi = 750, scale = 0.8,
        height = 8, width = 10)
 
+
+# DEPA --------------------------------------------------------------------
+# Read data ---------------------------------------------------------------
+departamentos <- read_csv(file.path(data, "observatorio_cases_departamental.csv"),
+                          locale = readr::locale(encoding = "latin1"))
+
+departamentos %>% 
+    group_by(departamento) %>% 
+    filter(cases > 100) %>%
+    mutate(
+        date = lubridate::ymd(date),
+        days_elapsed = date - min(date),
+        end_label = ifelse(date == max(date), departamento, NA)
+    ) %>%
+    ggplot(mapping = aes(x = days_elapsed, 
+                         y = cases, 
+                         label = end_label,
+                         color = departamento, 
+                         group = departamento)) + 
+    geom_line(size = 0.8) +
+    geom_text_repel(nudge_x = 2,
+                    nudge_y = 0.07,
+                    family = "Roboto Condensed", 
+                    segment.color = NA) + 
+    guides(color = FALSE) + 
+    scale_color_manual(values = prismatic::clr_darken(paletteer_d("ggsci::category20_d3"), 0.2)) +
+    scale_y_log10(labels = scales::comma_format(accuracy = 1)) + 
+    labs(x = "Days since 100th reported suspected case", 
+         y = "Cumulative Number of Suspected Cases (log 10 scale)", 
+         title = "Cumulative Suspected Cases of COVID-19 in Nicaragua",
+         subtitle = paste("Data as of", format(max(departamentos$date), "%A, %B %e, %Y")), 
+         caption = "Data: Observatorio Ciudadano Covid-19\nPlot: @rrmaximiliano") + 
+    theme_ipsum_rc() +
+    theme(
+        plot.caption = element_text(hjust = 0)
+    )
+
+# Save Plot
+ggsave(paste0(figures, "/cases-departamentos", date, ".pdf"), 
+       device = cairo_pdf, scale = 0.8,
+       height = 8, width = 12)
+
+ggsave(paste0(figures, "/cases-departamentos", date, ".png"), 
+       dpi = 750, scale = 0.8,
+       height = 8, width = 12)
+
