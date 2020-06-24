@@ -230,3 +230,53 @@ ggsave(paste0(figures, "/cases-departamentos", date, ".png"),
        dpi = 750, scale = 0.8,
        height = 8, width = 12)
 
+
+
+library(gghighlight)
+
+plot_departamento <- departamentos %>% 
+    group_by(departamento) %>% 
+    filter(cases > 10) %>%
+    mutate(
+        date = lubridate::ymd(date),
+        days_elapsed = date - min(date)
+    )
+
+plot_departamento %>% 
+    ggplot(aes(days_elapsed, cases, color = departamento)) +
+    geom_path(color = "firebrick",
+              size = 0.85, 
+              lineend = "round") +
+    gghighlight() +
+    geom_point(data = plot_departamento %>% filter(date == max(date)), 
+               size = 1.1, 
+               shape = 21, 
+               color = "firebrick",
+               fill = "firebrick2"
+    ) + 
+    facet_wrap(~ departamento, nrow = 4, scales = "free_x", labeller = label_wrap_gen(width = 20)) +
+    scale_y_log10(labels = scales::label_number_si()) + 
+    labs(x = "Days since 10th reported suspected case", 
+         y = "Cumulative Number of Suspected Cases (log 10 scale)", 
+         title = "Cumulative Suspected Cases of COVID-19 in Nicaragua",
+         subtitle = paste("Data as of", format(max(departamentos$date), "%A, %B %e, %Y")), 
+         caption = "Data: Observatorio Ciudadano Covid-19\nPlot: @rrmaximiliano") + 
+    theme_ipsum_rc() +
+    theme(
+        strip.text = element_text(colour = "firebrick", face = "bold"),
+        plot.caption = element_text(hjust = 0),
+        # axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title.x = element_text(size = rel(1)),
+        # axis.title.y = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1))
+    )
+
+# Save Plot
+ggsave(paste0(figures, "/cases-departamentos-todos-", date, ".pdf"), 
+       device = cairo_pdf, scale = 0.8,
+       height = 10, width = 14)
+
+ggsave(paste0(figures, "/cases-departamentos-todos", date, ".png"), 
+       dpi = 750, scale = 0.8,
+       height = 10, width = 14)
