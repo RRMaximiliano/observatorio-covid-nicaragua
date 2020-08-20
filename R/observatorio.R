@@ -93,6 +93,12 @@ full_cov_curve <- cov_curve %>%
 write_csv(full_cov_curve, path = file.path(data, "full_cov_curve.csv"))
 
 # Plot --------------------------------------------------------------------
+date_nic <- full_cov_curve %>% 
+    filter(countries == "Nicaragua") %>% 
+    summarise(date = max(date)) %>% 
+    select(date)
+
+date_nic <- date_nic$date[1]
 
 # Cases -------------------------------------------------------------------
 full_cov_curve %>% 
@@ -103,14 +109,14 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-17") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == ymd("2020-08-12") & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
     ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cu_cases, 
                          color = countries, label = end_label, 
                          group = countries)) + 
     geom_line(size = 0.8) + 
-    geom_text_repel(nudge_x = 1.1,
+    geom_text_repel(nudge_x = 2.1,
                     nudge_y = 0.1, 
                     family = "Roboto Condensed", 
                     segment.color = NA) + 
@@ -123,8 +129,9 @@ full_cov_curve %>%
     labs(x = "Days since 10th reported confirmed case", 
          y = "Cumulative number of cases (log scale)", 
          title = "Cumulative Cases from COVID-19, Central America",
-         subtitle = "Data as of Sunday 21, 2020. Data for Nicaragua as of Wednesday, 17, 2020.",
-         caption = "Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19.\nPlot: @rrmaximiliano") + 
+         subtitle = paste("Data as of", format(max(full_cov_curve$date), "%A, %B %e, %Y")), 
+         caption = paste("Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19. Data as of", format(max(date_nic$date), "%A, %B %e, %Y"), "\nPlot: @rrmaximiliano")
+    ) + 
     theme_ipsum_rc() +
     theme(
         plot.caption = element_text(hjust = 0)
@@ -140,6 +147,7 @@ ggsave(paste0(figures, "/cases-", date, ".png"),
        height = 8, width = 10)
 
 # Deaths ------------------------------------------------------------------
+
 full_cov_curve %>% 
     filter(cu_deaths > 10) %>% 
     mutate(
@@ -148,28 +156,26 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-06-17") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == ymd("2020-08-12") & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
-    ) %>%
+    ) %>% 
     ggplot(mapping = aes(x = days_elapsed, y = cu_deaths, 
                          color = countries, label = end_label, 
                          group = countries)) + 
     geom_line(size = 0.8) + 
     geom_text_repel(nudge_x = 1.1,
-                    nudge_y = 0.1, 
+                    nudge_y = -0.07, 
                     family = "Roboto Condensed", 
                     segment.color = NA) + 
     guides(color = FALSE) + 
     scale_color_manual(values = prismatic::clr_darken(paletteer_d("ggsci::category20_d3"), 0.2)) +
     scale_y_log10(labels = scales::comma_format(accuracy = 1)) + 
-    # scale_y_continuous(labels = scales::comma_format(accuracy = 1),
-    #                    breaks = 2^seq(4, 12),
-    #                    trans = "log2") +
     labs(x = "Days since 10th reported confirmed death", 
          y = "Cumulative Number of Cases (log scale)", 
          title = "Cumulative Deaths from COVID-19, Central America",
-         subtitle = "Data as of Sunday 21, 2020. Data for Nicaragua as of Wednesday, 17, 2020.",
-         caption = "Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19.\nPlot: @rrmaximiliano") + 
+         subtitle = paste("Data as of", format(max(full_cov_curve$date), "%A, %B %e, %Y")), 
+         caption = paste("Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19. Data as of", format(max(date_nic$date), "%A, %B %e, %Y"), "\nPlot: @rrmaximiliano")
+    ) +  
     theme_ipsum_rc() +
     theme(
         plot.caption = element_text(hjust = 0)
