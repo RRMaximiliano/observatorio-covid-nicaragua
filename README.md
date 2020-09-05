@@ -45,14 +45,14 @@ as”.
 
 ### Central America Region
 
-![Cumulative Cases](figs/cases-2020-08-20.png)
+![Cumulative Cases](figs/cases-2020-09-04.png)
 
-![Cumulative Deaths](figs/deaths-2020-08-20.png)
+![Cumulative Deaths](figs/deaths-2020-09-04.png)
 
 ### Cases in Nicaragua
 
 ![Cumulative Cases by
-Departments](figs/cases-departamentos2020-06-22.png)
+Departments](figs/cases-departamentos2020-09-04.png)
 
 ## Caveats
 

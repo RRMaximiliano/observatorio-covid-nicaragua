@@ -18,12 +18,12 @@ data    <- file.path(project, "data")
 figures <- file.path(project, "figs")
 
 # Read data ---------------------------------------------------------------
-nicaragua <- read_csv(file.path(data, "observatorio_cases.csv"))
+nicaragua <- read_csv(file.path(data, "observatorio_nicaragua.csv"))
+
 
 nicaragua %>% 
     filter(cases > 100) %>% 
     mutate(
-        date = lubridate::ymd(date),
         days_elapsed = date - min(date)
     ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cases)) + 
@@ -62,6 +62,9 @@ get_ecdc_data <- function(url = "https://www.ecdc.europa.eu/sites/default/files/
 covid_raw <- get_ecdc_data(url = "https://www.ecdc.europa.eu/sites/default/files/documents/",
                            fname = "COVID-19-geographic-disbtribution-worldwide-",
                            ext = "xlsx")
+
+# Limpiar datos -----------------------------------------------------------
+
 covid <- covid_raw %>%
     mutate(date = lubridate::ymd(date_rep),
            iso2 = geo_id) %>% 
@@ -77,9 +80,13 @@ cov_curve <- covid %>%
            cu_deaths = cumsum(deaths)) %>% 
     rename(countries = countries_and_territories) %>% 
     select(date, countries, iso2, cu_cases, cu_deaths) %>% 
+    mutate(
+        countries = case_when(countries == "Nicaragua" ~ "Nicaragua",
+                              TRUE ~ as.character(countries))
+    ) %>% 
     filter(countries != "Nicaragua")
 
-# Homegnizar variables ----------------------------------------------------
+# Homogenizar variables ----------------------------------------------------
 nic_cov_curve <- nicaragua %>% 
     rename(cu_cases = cases,
            cu_deaths = deaths) %>% 
@@ -109,7 +116,7 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-08-12") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == max(date) & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
     ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cu_cases, 
@@ -130,7 +137,7 @@ full_cov_curve %>%
          y = "Cumulative number of cases (log scale)", 
          title = "Cumulative Cases from COVID-19, Central America",
          subtitle = paste("Data as of", format(max(full_cov_curve$date), "%A, %B %e, %Y")), 
-         caption = paste("Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19. Data as of", format(max(date_nic$date), "%A, %B %e, %Y"), "\nPlot: @rrmaximiliano")
+         caption = paste("Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19. Data as of", format(max(date_nic), "%A, %B %e, %Y"), "\nPlot: @rrmaximiliano")
     ) + 
     theme_ipsum_rc() +
     theme(
@@ -156,9 +163,9 @@ full_cov_curve %>%
                               TRUE ~ countries),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), countries, NA),
-        end_label = case_when(date == ymd("2020-08-12") & countries == "Nicaragua" ~ "Nicaragua",
+        end_label = case_when(date == max(date) & countries == "Nicaragua" ~ "Nicaragua",
                               TRUE ~ end_label)
-    ) %>% 
+    ) %>%
     ggplot(mapping = aes(x = days_elapsed, y = cu_deaths, 
                          color = countries, label = end_label, 
                          group = countries)) + 
@@ -174,7 +181,7 @@ full_cov_curve %>%
          y = "Cumulative Number of Cases (log scale)", 
          title = "Cumulative Deaths from COVID-19, Central America",
          subtitle = paste("Data as of", format(max(full_cov_curve$date), "%A, %B %e, %Y")), 
-         caption = paste("Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19. Data as of", format(max(date_nic$date), "%A, %B %e, %Y"), "\nPlot: @rrmaximiliano")
+         caption = paste("Data: European Centre for Disease Prevention and Control.\nData for Nicaragua: Observatorio Ciudadano Covid-19. Data as of", format(max(date_nic), "%A, %B %e, %Y"), "\nPlot: @rrmaximiliano")
     ) +  
     theme_ipsum_rc() +
     theme(
@@ -193,14 +200,12 @@ ggsave(paste0(figures, "/deaths-", date, ".png"),
 
 # DEPA --------------------------------------------------------------------
 # Read data ---------------------------------------------------------------
-departamentos <- read_csv(file.path(data, "observatorio_cases_departamental.csv"),
-                          locale = readr::locale(encoding = "latin1"))
+departamentos <- read_csv(file.path(data, "observatorio_nicaragua_departamentos.csv"))
 
 departamentos %>% 
     group_by(departamento) %>% 
     filter(cases > 100) %>%
     mutate(
-        date = lubridate::ymd(date),
         days_elapsed = date - min(date),
         end_label = ifelse(date == max(date), departamento, NA)
     ) %>%
@@ -236,7 +241,7 @@ ggsave(paste0(figures, "/cases-departamentos", date, ".png"),
        dpi = 750, scale = 0.8,
        height = 8, width = 12)
 
-
+# Highlight ---------------------------------------------------------------
 
 library(gghighlight)
 
@@ -244,23 +249,22 @@ plot_departamento <- departamentos %>%
     group_by(departamento) %>% 
     filter(cases > 10) %>%
     mutate(
-        date = lubridate::ymd(date),
         days_elapsed = date - min(date)
     )
 
 plot_departamento %>% 
     ggplot(aes(days_elapsed, cases, color = departamento)) +
-    geom_path(color = "firebrick",
+    geom_path(color = "#327da8",
               size = 0.85, 
               lineend = "round") +
     gghighlight() +
     geom_point(data = plot_departamento %>% filter(date == max(date)), 
                size = 1.1, 
                shape = 21, 
-               color = "firebrick",
-               fill = "firebrick2"
+               color = "#327da8",
+               fill = "#327da8"
     ) + 
-    facet_wrap(~ departamento, nrow = 4, scales = "free_x", labeller = label_wrap_gen(width = 20)) +
+    facet_wrap(~ departamento, nrow = 3, scales = "free_x", labeller = label_wrap_gen(width = 20)) +
     scale_y_log10(labels = scales::label_number_si()) + 
     labs(x = "Days since 10th reported suspected case", 
          y = "Cumulative Number of Suspected Cases (log 10 scale)", 
@@ -269,7 +273,7 @@ plot_departamento %>%
          caption = "Data: Observatorio Ciudadano Covid-19\nPlot: @rrmaximiliano") + 
     theme_ipsum_rc() +
     theme(
-        strip.text = element_text(colour = "firebrick", face = "bold"),
+        strip.text = element_text(colour = "#327da8", face = "bold"),
         plot.caption = element_text(hjust = 0),
         # axis.text.x = element_text(size = rel(1)),
         # axis.text.y = element_text(size = rel(1)),
@@ -283,6 +287,95 @@ ggsave(paste0(figures, "/cases-departamentos-todos-", date, ".pdf"),
        device = cairo_pdf, scale = 0.8,
        height = 10, width = 14)
 
-ggsave(paste0(figures, "/cases-departamentos-todos", date, ".png"), 
+ggsave(paste0(figures, "/cases-departamentos-todos-", date, ".png"), 
        dpi = 750, scale = 0.8,
        height = 10, width = 14)
+
+
+plot_departamento <- departamentos %>% 
+    filter(departamento %in% c("Matagalpa", "León", "Granada", "Masaya", "Chinandega", "Estelí")) %>%
+    group_by(departamento) %>% 
+    filter(cases > 10) %>%
+    mutate(
+        days_elapsed = date - min(date)
+    )
+
+plot_departamento %>% 
+    ggplot(aes(days_elapsed, cases, color = departamento)) +
+    geom_path(color = "#327da8",
+              size = 0.85, 
+              lineend = "round") +
+    gghighlight() +
+    geom_point(data = plot_departamento %>% filter(date == max(date)), 
+               size = 1.1, 
+               shape = 21, 
+               color = "#327da8",
+               fill = "#327da8"
+    ) + 
+    facet_wrap(~ departamento, nrow = 3, scales = "free_x", labeller = label_wrap_gen(width = 20)) +
+    scale_y_log10(labels = scales::label_number_si()) + 
+    labs(x = "Days since 10th reported suspected case", 
+         y = "Cumulative Number of Suspected Cases (log 10 scale)", 
+         title = "Cumulative Suspected Cases of COVID-19 in Nicaragua",
+         subtitle = paste("Data as of", format(max(departamentos$date), "%A, %B %e, %Y")), 
+         caption = "Data: Observatorio Ciudadano Covid-19\nPlot: @rrmaximiliano") + 
+    theme_ipsum_rc() +
+    theme(
+        strip.text = element_text(colour = "#327da8", face = "bold"),
+        plot.caption = element_text(hjust = 0),
+        # axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title.x = element_text(size = rel(1)),
+        # axis.title.y = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1))
+    )
+
+# Save Plot
+ggsave(paste0(figures, "/cases-departamentos-todos-", date, ".pdf"), 
+       device = cairo_pdf, scale = 0.8,
+       height = 10, width = 14)
+
+ggsave(paste0(figures, "/cases-departamentos-todos-", date, ".png"), 
+       dpi = 750, scale = 0.8,
+       height = 10, width = 14)
+
+
+# Col Graphs --------------------------------------------------------------
+library(zoo)
+
+departamentos %>%
+    group_by(departamento) %>% 
+    mutate(cases_per = cases - lag(cases, default = cases[1]),
+           rollmean = rollmean(cases_per, 7, na.pad = T)) %>% 
+    ggplot(aes(date)) +
+    geom_bar(aes(y = cases_per), stat = "identity", width = 0.5, color = "grey") + 
+    geom_line(aes(y = rollmean), color = "#327da8", size = 1) + 
+    facet_wrap(~departamento, scales = "free_y") +
+    labs(x = "Date", 
+         y = "Suspected Cases per day", 
+         title = "Suspected Cases of COVID-19 per day in Nicaragua",
+         subtitle = paste("Data as of", format(max(departamentos$date), "%A, %B %e, %Y")), 
+         caption = "Notes: Line represents 7-day moving average.\nData: Observatorio Ciudadano Covid-19\nPlot: @rrmaximiliano") + 
+    theme_ipsum_rc() +
+    theme(
+        strip.text = element_text(colour = "#327da8", face = "bold"),
+        plot.caption = element_text(hjust = 0),
+        # axis.text.x = element_text(size = rel(1)),
+        # axis.text.y = element_text(size = rel(1)),
+        # axis.title.x = element_text(size = rel(1)),
+        # axis.title.y = element_text(size = rel(1)),
+        # legend.text = element_text(size = rel(1))
+    )
+
+# Save Plot
+ggsave(paste0(figures, "/cases_per_day-departamentos-todos-", date, ".pdf"), 
+       device = cairo_pdf, scale = 0.8,
+       height = 10, width = 14)
+
+ggsave(paste0(figures, "/cases_per_day-departamentos-todos-", date, ".png"), 
+       dpi = 750, scale = 0.8,
+       height = 10, width = 14)
+
+nicaragua %>% 
+mutate(cases_per = cases - lag(cases, default = cases[1]),
+       rollmean = rollmean(cases_per, 7, fill = NA)) %>% View()
